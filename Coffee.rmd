@@ -1,9 +1,12 @@
 ---
-output:
-  pdf_document: default
-  html_document: default
+title: "STA302 Proposal"
+author: "Bilin"
+date: "`r Sys.Date()`"
+output: pdf_document
 ---
+
 # load the library
+
 ```{r}
 library(tidyverse)
 library(knitr)
@@ -13,6 +16,7 @@ library(dplyr)
 ```
 
 # extract the subset of data we need
+
 ```{r}
 coffee_df <- read.csv(file = "merged_data_cleaned.csv") %>% 
   rename("Ratings" = Total.Cup.Points) %>% 
@@ -21,6 +25,7 @@ coffee_df <- read.csv(file = "merged_data_cleaned.csv") %>%
 ```
 
 # numerical summary
+
 ```{r}
 summary(coffee_df)
 
@@ -65,15 +70,18 @@ coffee_df %>% group_by(Species) %>%
   rename(`Number of Observations` = num_species) %>% 
   kable(align = "c", longtable = TRUE)
 ```
-The coffee ratings dataset contains 1339 observations, with 1311 of these being of the "Arabica" species, while the other 28 are of the "Robusta" species. The minimum for all variables is 0, while the maximum rating is given in the Sweetness category. Sweetness also has the highest mean and standard deviation.  
+
+The coffee ratings dataset contains 1339 observations, with 1311 of these being of the "Arabica" species, while the other 28 are of the "Robusta" species. The minimum for all variables is 0, while the maximum rating is given in the Sweetness category. Sweetness also has the highest mean and standard deviation.
 
 # Fit the model
+
 ```{r}
 model <- lm(Ratings ~ InSpecies + Aroma + Flavor + Aftertaste + Acidity + Sweetness, data = coffee_df)
 model
 ```
 
 # assumption checking
+
 ```{r}
 # fitted values
 y_hat <- fitted(model)
@@ -90,20 +98,29 @@ coffee_df <- coffee_df %>%
 ```
 
 # residual-fitted value plot
+
 ```{r}
+plot(x = y_hat, y = e_hat, main = "Residual vs Fitted", xlab = "Fitted", 
+     ylab = "Residuals")
+# mtext(~italic("Fig.1: The residuals versus fitted values plot from the model."), 
+#       side = 1, line = 3, outer = TRUE, adj = 0.5)
+title(sub = ~italic("Fig.1: The residuals versus fitted values plot from the model."))
+
 # plot1 <- 
-  ggplot(data = coffee_df, 
-       mapping = aes(x = y_hat, y = e_hat))+
-  geom_point(alpha = 0.5, size = 2)+ 
-  theme_bw()+
-  theme(plot.title = element_text(hjust = 0.5))+
-  labs(x = "Fitted", y = "Residuals", title = "Residual vs. Fitted")
+  # ggplot(data = coffee_df, 
+  #      mapping = aes(x = y_hat, y = e_hat))+
+  # geom_point(alpha = 0.5, size = 2)+ 
+  # theme_bw()+
+  # theme(plot.title = element_text(hjust = 0.5))+
+  # labs(x = "Fitted", y = "Residuals", title = "Residual vs. Fitted")
 # ggsave(plot1, file = "ResidFitted.png", dpi = 600, width = 5, height = 5)
 ```
 
 # all residual vs. predictors
+
 ```{r}
-par(mfrow = c(2, 3))
+
+par(mfrow = c(2, 3),oma=c(4, 2, 0, 0)+0.1)
 
 plot(x = coffee_df$InSpecies, y = e_hat,
                       main = "Residual vs. Species", xlab = "Species",
@@ -120,30 +137,42 @@ plot(x = coffee_df$Aftertaste, y = e_hat,
 plot(x = coffee_df$Acidity, y = e_hat,
                       main = "Residual vs. Acidity", xlab = "Acidity",
                       ylab = "Residual")
+
 plot(x = coffee_df$Sweetness, y = e_hat,
                     main = "Residual vs. Sweetness", xlab = "Sweetness",
                     ylab = "Residual")
-
+mtext(~italic("Fig.4: All residuals versus predictors plots from the model."), side = 1, line = 3, outer = TRUE, adj = 0.5)
+# title(sub = "Figure4: All residuals versus predictors from the model.", adj = 0.5)
 ```
+
 # checking normality of errors
+
 ```{r}
 
 qqnorm(e_hat)
 qqline(e_hat)
-```
-# Response vs. Fitted
-```{r}
-# plot3 <- 
-  ggplot(data = coffee_df, 
-                mapping = aes(x = y_hat, y = Ratings))+
-  geom_point(alpha = 0.5, size = 2)+ 
-  theme_bw()+
-  theme(plot.title = element_text(hjust = 0.5))+
-  labs(x = "Fitted", y = "Ratings", title = "Response vs. Fitted")
-# ggsave(plot3, file = "ResponseFitted.png", dpi = 600, width = 5, height = 5)
-```
-# pair plots of every predictors
-```{r}
-pairs(coffee_df[, c(2:7)])
+title(sub = ~italic("Fig.3: The normal Q-Q plot of residues from the model."))
 ```
 
+# Response vs. Fitted
+
+```{r}
+# plot3 <- 
+  # ggplot(data = coffee_df, 
+  #               mapping = aes(x = y_hat, y = Ratings))+
+  # geom_point(alpha = 0.5, size = 2)+ 
+  # theme_bw()+
+  # theme(plot.title = element_text(hjust = 0.5))+
+  # labs(x = "Fitted", y = "Ratings", title = "Response vs. Fitted")
+# ggsave(plot3, file = "ResponseFitted.png", dpi = 600, width = 5, height = 5)
+plot(x = y_hat, y = coffee_df$Ratings, main = "Response vs. Fitted", xlab = "Fitted", 
+     ylab = "Response")
+title(sub = ~italic("Fig.2: The reponse (coffee ratings) versus fitted values plot from the model."))
+```
+
+# pair plots of every predictors
+
+```{r}
+pairs(coffee_df[, c(2:7)])
+title(sub = ~italic("Fig.5: The pairwise scatter plots of all predictors."))
+```
