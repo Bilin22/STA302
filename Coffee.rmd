@@ -1,0 +1,101 @@
+# load the library
+```{r}
+library(tidyverse)
+# set wd
+# setwd("~/Desktop/Github Projects/STA302")
+```
+
+# extract the subset of data we need
+```{r}
+coffee_df <- read.csv(file = "merged_data_cleaned.csv") %>% 
+  rename("Ratings" = Total.Cup.Points) %>% 
+  mutate(.before = 1, InSpecies = ifelse(Species == "Arabica", 1, 0)) %>% 
+  select(Species, InSpecies, Aroma, Flavor, Aftertaste, Acidity, Sweetness, Ratings)
+```
+
+# numerical summary
+```{r}
+summary(coffee_df)
+```
+
+
+# Fit the model
+```{r}
+model <- lm(Ratings ~ InSpecies + Aroma + Flavor + Aftertaste + Acidity, data = coffee_df)
+
+```
+
+# assumption checking
+```{r}
+# fitted values
+y_hat <- fitted(model)
+# residual
+e_hat <- resid(model)
+
+# attached these columns to coffee_df
+coffee_df <- coffee_df %>% 
+  mutate("y_hat" = fitted(model)) %>% 
+  mutate("e_hat" = resid(model))
+
+
+# write.csv(coffee_df, "CoffeeRatings.csv", row.names = FALSE)
+```
+
+# residual-fitted value plot
+```{r}
+# plot1 <- 
+  ggplot(data = coffee_df, 
+       mapping = aes(x = y_hat, y = e_hat))+
+  geom_point(alpha = 0.5, size = 2)+ 
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5))+
+  labs(x = "Fitted", y = "Residuals", title = "Residual vs. Fitted")
+# ggsave(plot1, file = "ResidFitted.png", dpi = 600, width = 5, height = 5)
+```
+
+# all residual vs. predictors
+```{r}
+par(mfrow = c(2, 3))
+
+plot(x = coffee_df$InSpecies, y = e_hat,
+                      main = "Residual vs. Species", xlab = "Species",
+                      ylab = "Residual")
+plot(x = coffee_df$Aroma, y = e_hat,
+                    main = "Residual vs. Aroma", xlab = "Aroma",
+                    ylab = "Residual")
+plot(x = coffee_df$Flavor, y = e_hat,
+                     main = "Residual vs. Flavor", xlab = "Flavor",
+                     ylab = "Residual")
+plot(x = coffee_df$Aftertaste, y = e_hat,
+                    main = "Residual vs. Aftertaste", xlab = "Aftertaste",
+                    ylab = "Residual")
+plot(x = coffee_df$Acidity, y = e_hat,
+                      main = "Residual vs. Acidity", xlab = "Acidity",
+                      ylab = "Residual")
+plot(x = coffee_df$Sweetness, y = e_hat,
+                    main = "Residual vs. Sweetness", xlab = "Sweetness",
+                    ylab = "Residual")
+
+```
+# checking normality of errors
+```{r}
+
+qqnorm(e_hat)
+qqline(e_hat)
+```
+# Response vs. Fitted
+```{r}
+# plot3 <- 
+  ggplot(data = coffee_df, 
+                mapping = aes(x = y_hat, y = Ratings))+
+  geom_point(alpha = 0.5, size = 2)+ 
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5))+
+  labs(x = "Fitted", y = "Ratings", title = "Response vs. Fitted")
+# ggsave(plot3, file = "ResponseFitted.png", dpi = 600, width = 5, height = 5)
+```
+# pair plots of every predictors
+```{r}
+pairs(coffee_df[, c(2:7)])
+```
+

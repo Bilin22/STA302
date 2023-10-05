@@ -1,5 +1,5 @@
 library(tidyverse)
-library(patchwork)
+# library(patchwork)
 
 # set wd
 setwd("~/Desktop/Github Projects/STA302")
@@ -9,10 +9,10 @@ setwd("~/Desktop/Github Projects/STA302")
 # y = Cupper.Points (Ratings)
 # The indicator is created for species, where = 1 if is "Arabica"; = 2 otherwise
 coffee_df <- read.csv(file = "merged_data_cleaned.csv") %>% 
-  select(Species, Aroma, Flavor, Aftertaste, Acidity, Sweetness, Total.Cup.Points) %>% 
   rename("Ratings" = Total.Cup.Points) %>% 
   mutate(.before = 1, InSpecies = ifelse(Species == "Arabica", 1, 0)) %>% 
   select(InSpecies, Aroma, Flavor, Aftertaste, Acidity, Sweetness, Ratings)
+
 
 # Q1: Fit your preliminary multiple linear model 
 #and present the estimated relationship. 
@@ -25,6 +25,8 @@ e_hat <- resid(model)
 coffee_df <- coffee_df %>% 
   mutate("y_hat" = fitted(model)) %>% 
   mutate("e_hat" = resid(model))
+
+write.csv(coffee_df, "CoffeeRatings.csv", row.names = FALSE)
 
 # resid_fitted <- as.data.frame(cbind(y_hat, e_hat))
 
