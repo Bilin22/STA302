@@ -69,8 +69,8 @@ The coffee ratings dataset contains 1339 observations, with 1311 of these being 
 
 # Fit the model
 ```{r}
-model <- lm(Ratings ~ InSpecies + Aroma + Flavor + Aftertaste + Acidity, data = coffee_df)
-
+model <- lm(Ratings ~ InSpecies + Aroma + Flavor + Aftertaste + Acidity + Sweetness, data = coffee_df)
+model
 ```
 
 # assumption checking
