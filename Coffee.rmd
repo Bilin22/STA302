@@ -1,6 +1,6 @@
 ---
 title: "STA302 Proposal"
-author: "Bilin"
+author: "Group 25"
 date: "`r Sys.Date()`"
 output: pdf_document
 ---
@@ -93,6 +93,10 @@ coffee_df <- coffee_df %>%
   mutate("y_hat" = fitted(model)) %>% 
   mutate("e_hat" = resid(model))
 
+# test coffee df: drop an "outliner" row
+test_coffee_df <- coffee_df %>% 
+  filter(!row_number() %in% c(1311))
+  
 
 # write.csv(coffee_df, "CoffeeRatings.csv", row.names = FALSE)
 ```
@@ -102,18 +106,12 @@ coffee_df <- coffee_df %>%
 ```{r}
 plot(x = y_hat, y = e_hat, main = "Residual vs Fitted", xlab = "Fitted", 
      ylab = "Residuals")
-# mtext(~italic("Fig.1: The residuals versus fitted values plot from the model."), 
-#       side = 1, line = 3, outer = TRUE, adj = 0.5)
 title(sub = ~italic("Fig.1: The residuals versus fitted values plot from the model."))
 
-# plot1 <- 
-  # ggplot(data = coffee_df, 
-  #      mapping = aes(x = y_hat, y = e_hat))+
-  # geom_point(alpha = 0.5, size = 2)+ 
-  # theme_bw()+
-  # theme(plot.title = element_text(hjust = 0.5))+
-  # labs(x = "Fitted", y = "Residuals", title = "Residual vs. Fitted")
-# ggsave(plot1, file = "ResidFitted.png", dpi = 600, width = 5, height = 5)
+# test coffee df
+# plot(x = test_coffee_df$y_hat, y = test_coffee_df$e_hat, main = "Residual vs Fitted", xlab = "Fitted", 
+#      ylab = "Residuals")
+# title(sub = ~italic("Fig.1: The residuals versus fitted values plot from the model."))
 ```
 
 # all residual vs. predictors
@@ -142,7 +140,34 @@ plot(x = coffee_df$Sweetness, y = e_hat,
                     main = "Residual vs. Sweetness", xlab = "Sweetness",
                     ylab = "Residual")
 mtext(~italic("Fig.4: All residuals versus predictors plots from the model."), side = 1, line = 3, outer = TRUE, adj = 0.5)
-# title(sub = "Figure4: All residuals versus predictors from the model.", adj = 0.5)
+
+
+
+# test
+# par(mfrow = c(2, 3),oma=c(4, 2, 0, 0)+0.1)
+# 
+# plot(x = test_coffee_df$InSpecies, y = test_coffee_df$e_hat,
+#                       main = "Residual vs. Species", xlab = "Species",
+#                       ylab = "Residual")
+# plot(x = test_coffee_df$Aroma, y = test_coffee_df$e_hat,
+#                     main = "Residual vs. Aroma", xlab = "Aroma",
+#                     ylab = "Residual")
+# plot(x = test_coffee_df$Flavor, y = test_coffee_df$e_hat,
+#                      main = "Residual vs. Flavor", xlab = "Flavor",
+#                      ylab = "Residual")
+# plot(x = test_coffee_df$Aftertaste, y = test_coffee_df$e_hat,
+#                     main = "Residual vs. Aftertaste", xlab = "Aftertaste",
+#                     ylab = "Residual")
+# plot(x = test_coffee_df$Acidity, y = test_coffee_df$e_hat,
+#                       main = "Residual vs. Acidity", xlab = "Acidity",
+#                       ylab = "Residual")
+# plot(x = test_coffee_df$Sweetness, y = test_coffee_df$e_hat,
+#                     main = "Residual vs. Sweetness", xlab = "Sweetness",
+#                     ylab = "Residual")
+# mtext(~italic("Fig.4: All residuals versus predictors plots from the model."), side = 1, line = 3, outer = TRUE, adj = 0.5)
+
+
+
 ```
 
 # checking normality of errors
@@ -152,22 +177,28 @@ mtext(~italic("Fig.4: All residuals versus predictors plots from the model."), s
 qqnorm(e_hat)
 qqline(e_hat)
 title(sub = ~italic("Fig.3: The normal Q-Q plot of residues from the model."))
+
+
+# test
+# qqnorm(test_coffee_df$e_hat)
+# qqline(test_coffee_df$e_hat)
+# title(sub = ~italic("Fig.3: The normal Q-Q plot of residues from the model."))
 ```
 
 # Response vs. Fitted
 
 ```{r}
-# plot3 <- 
-  # ggplot(data = coffee_df, 
-  #               mapping = aes(x = y_hat, y = Ratings))+
-  # geom_point(alpha = 0.5, size = 2)+ 
-  # theme_bw()+
-  # theme(plot.title = element_text(hjust = 0.5))+
-  # labs(x = "Fitted", y = "Ratings", title = "Response vs. Fitted")
-# ggsave(plot3, file = "ResponseFitted.png", dpi = 600, width = 5, height = 5)
+
 plot(x = y_hat, y = coffee_df$Ratings, main = "Response vs. Fitted", xlab = "Fitted", 
      ylab = "Response")
+abline(coef = c(0,1), lty = 2)
 title(sub = ~italic("Fig.2: The reponse (coffee ratings) versus fitted values plot from the model."))
+
+
+# test
+# plot(x = test_coffee_df$y_hat, y = test_coffee_df$Ratings, main = "Response vs. Fitted", xlab = "Fitted", 
+#      ylab = "Response")
+# title(sub = ~italic("Fig.2: The reponse (coffee ratings) versus fitted values plot from the model."))
 ```
 
 # pair plots of every predictors
@@ -175,4 +206,11 @@ title(sub = ~italic("Fig.2: The reponse (coffee ratings) versus fitted values pl
 ```{r}
 pairs(coffee_df[, c(2:7)])
 title(sub = ~italic("Fig.5: The pairwise scatter plots of all predictors."))
+
+# test
+# pairs(test_coffee_df[, c(2:7)])
+# title(sub = ~italic("Fig.5: The pairwise scatter plots of all predictors."))
 ```
+
+
+
