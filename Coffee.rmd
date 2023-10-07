@@ -204,7 +204,7 @@ title(sub = ~italic("Fig.2: The reponse (coffee ratings) versus fitted values pl
 # pair plots of every predictors
 
 ```{r}
-pairs(coffee_df[, c(2:7)])
+pairs(coffee_df[, c(2:7)], main="Pairwise Scatterplots of Predictors")
 title(sub = ~italic("Fig.5: The pairwise scatter plots of all predictors."))
 
 # test
