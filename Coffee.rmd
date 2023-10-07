@@ -169,7 +169,7 @@ mtext(~italic("Fig.4: All residuals versus predictors plots from the model."), s
 
 qqnorm(e_hat)
 qqline(e_hat)
-title(sub = ~italic("Fig.3: The normal Q-Q plot of residues from the model."))
+title(sub = ~italic("Fig.3: The normal Q-Q plot of residuals from the model."))
 
 
 ```
@@ -189,7 +189,7 @@ title(sub = ~italic("Fig.2: The reponse (coffee ratings) versus fitted values pl
 # pair plots of every predictors
 
 ```{r}
-pairs(coffee_df[, c(2:7)])
+pairs(coffee_df[, c(2:7)], main="Pairwise Scatterplots of Predictors")
 title(sub = ~italic("Fig.5: The pairwise scatter plots of all predictors."))
 
 
