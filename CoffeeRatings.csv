@@ -1,4 +1,4 @@
-"InSpecies","Aroma","Flavor","Aftertaste","Acidity","Sweetness","Ratings","y_hat","e_hat"
+"ISpecies","Aroma","Flavor","Aftertaste","Acidity","Sweetness","Ratings","y_hat","e_hat"
 1,8.67,8.83,8.67,8.75,10,90.58,92.9021927496444,-2.3221927496444
 1,8.75,8.67,8.5,8.58,10,89.92,91.8527331830909,-1.93273318309092
 1,8.42,8.5,8.42,8.42,10,89.75,90.3847234701207,-0.63472347012068
