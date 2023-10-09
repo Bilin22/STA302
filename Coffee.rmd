@@ -66,9 +66,9 @@ kable(summary_frame, format = "markdown", caption = "Coffee Ratings Dataset Nume
       align = "c", longtable = TRUE, digits = 3)
 
 coffee_df %>% group_by(Species) %>% 
-  summarise(num_species = n()) %>% 
-  rename(`Number of Observations` = num_species) %>% 
-  kable(align = "c", longtable = TRUE)
+  summarise(num_species = n(), Proportion = round(num_species/nrow(coffee_df), 3), mean_rating= round(mean(Ratings), 3)) %>% 
+  rename(`Number of Observations` = num_species, 'Mean Rating' = mean_rating) %>% 
+  kable(caption = "Coffee Ratings Dataset Categorical Variable Summary", align = "c", longtable = TRUE)
 ```
 
 The coffee ratings dataset contains 1339 observations, with 1311 of these being of the "Arabica" species, while the other 28 are of the "Robusta" species. The minimum for all variables is 0, while the maximum rating is given in the Sweetness category. Sweetness also has the highest mean and standard deviation.
