@@ -20,8 +20,8 @@ library(dplyr)
 ```{r}
 coffee_df <- read.csv(file = "merged_data_cleaned.csv") %>% 
   rename("Ratings" = Total.Cup.Points) %>% 
-  mutate(.before = 1, InSpecies = ifelse(Species == "Arabica", 1, 0)) %>% 
-  select(Species, InSpecies, Aroma, Flavor, Aftertaste, Acidity, Sweetness, Ratings)
+  mutate(.before = 1, ISpecies = ifelse(Species == "Arabica", 1, 0)) %>% 
+  select(Species, ISpecies, Aroma, Flavor, Aftertaste, Acidity, Sweetness, Ratings)
 ```
 
 # numerical summary
@@ -76,7 +76,7 @@ The coffee ratings dataset contains 1339 observations, with 1311 of these being 
 # Fit the model
 
 ```{r}
-model <- lm(Ratings ~ InSpecies + Aroma + Flavor + Aftertaste + Acidity + Sweetness, data = coffee_df)
+model <- lm(Ratings ~ ISpecies + Aroma + Flavor + Aftertaste + Acidity + Sweetness, data = coffee_df)
 model
 ```
 
@@ -136,7 +136,7 @@ title(sub = ~italic("Fig.1: The residuals versus fitted values plot from the mod
 
 par(mfrow = c(2, 3),oma=c(4, 2, 0, 0)+0.1)
 
-plot(x = coffee_df$InSpecies, y = e_hat,
+plot(x = coffee_df$ISpecies, y = e_hat,
                       main = "Residual vs. Species", xlab = "Species",
                       ylab = "Residual")
 plot(x = coffee_df$Aroma, y = e_hat,
