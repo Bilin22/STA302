@@ -109,7 +109,7 @@ ggplot(data = coffee_df, mapping = aes(x = Species, y = e_hat)) +
   theme(plot.title = element_text(hjust = 0.5), 
         plot.caption = element_text(hjust = 0.5, face = "italic"))+
   labs(y = "Residuals", title = "Residual by Coffee Species", 
-       caption = "Fig.6: Distribution of Residual vs. Coffee Species")
+       caption = "Fig.4: Distribution of Residual vs. Coffee Species")
   
   
 ```
@@ -155,7 +155,7 @@ plot(x = coffee_df$Acidity, y = e_hat,
 plot(x = coffee_df$Sweetness, y = e_hat,
                     main = "Residual vs. Sweetness", xlab = "Sweetness",
                     ylab = "Residual")
-mtext(~italic("Fig.4: All residuals versus predictors plots from the model."), side = 1, line = 3, outer = TRUE, adj = 0.5)
+mtext(~italic("Fig.2: All residuals versus predictors plots from the model."), side = 1, line = 3, outer = TRUE, adj = 0.5)
 
 
 
@@ -181,7 +181,7 @@ title(sub = ~italic("Fig.3: The normal Q-Q plot of residuals from the model."))
 plot(x = y_hat, y = coffee_df$Ratings, main = "Response vs. Fitted", xlab = "Fitted", 
      ylab = "Response")
 abline(coef = c(0,1), lty = 2)
-title(sub = ~italic("Fig.2: The reponse (coffee ratings) versus fitted values plot from the model."))
+title(sub = ~italic("Fig.5: The response (coffee ratings) versus fitted values plot from the model."))
 
 
 ```
@@ -190,7 +190,7 @@ title(sub = ~italic("Fig.2: The reponse (coffee ratings) versus fitted values pl
 
 ```{r}
 pairs(coffee_df[, c(2:7)], main="Pairwise Scatterplots of Predictors")
-title(sub = ~italic("Fig.5: The pairwise scatter plots of all predictors."))
+title(sub = ~italic("Fig.6: The pairwise scatter plots of all predictors."))
 
 
 ```
