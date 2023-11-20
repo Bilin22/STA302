@@ -1,0 +1,199 @@
+---
+title: "Part III"
+author: "Group 25"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+
+# load the library
+
+```{r}
+library(tidyverse)
+library(knitr)
+library(dplyr)
+library(car)
+```
+
+# extract the subset of data we need
+
+```{r}
+coffee_df <- read.csv(file = "merged_data_cleaned.csv") %>% 
+  rename("Ratings" = Total.Cup.Points) %>% 
+  mutate(.before = 1, ISpecies = ifelse(Species == "Arabica", 1, 0)) %>% 
+  select(Species, ISpecies, Aroma, Flavor, Aftertaste, Acidity, Sweetness, Ratings)
+```
+
+# numerical summary
+
+```{r}
+summary(coffee_df)
+
+summary_table <- coffee_df %>%
+  summarise(
+    Aroma_mean = mean(Aroma),
+    Flavor_mean = mean(Flavor),
+    Aftertaste_mean = mean(Aftertaste),
+    Sweetness_mean = mean(Sweetness),
+    Acidity_mean = mean(Acidity),
+    Aroma_sd = sd(Aroma),
+    Flavor_sd = sd(Flavor),
+    Aftertaste_sd = sd(Aftertaste),
+    Sweetness_sd = sd(Sweetness),
+    Acidity_sd = sd(Acidity),
+    Aroma_max = max(Aroma),
+    Flavor_max = max(Flavor),
+    Aftertaste_max = max(Aftertaste),
+    Sweetness_max = max(Sweetness),
+    Acidity_max = max(Acidity),
+    Aroma_min = min(Aroma),
+    Flavor_min = min(Flavor),
+    Aftertaste_min = min(Aftertaste),
+    Sweetness_min = min(Sweetness),
+    Acidity_min = min(Acidity), 
+)
+
+summary_frame = data.frame(
+  Variables = c("Flavor", "Aroma", "Sweetness", "Aftertaste", "Acidity"),
+  Min = c(summary_table$Flavor_min, summary_table$Aroma_min, summary_table$Sweetness_min, summary_table$Aftertaste_min, summary_table$Acidity_min),
+  Max = c(summary_table$Flavor_max, summary_table$Aroma_max, summary_table$Sweetness_max, summary_table$Aftertaste_max, summary_table$Acidity_max),
+  Mean = c(summary_table$Flavor_mean, summary_table$Aroma_mean, summary_table$Sweetness_mean, summary_table$Aftertaste_mean, summary_table$Acidity_mean),
+  SD = c(summary_table$Flavor_sd, summary_table$Aroma_sd, summary_table$Sweetness_sd, summary_table$Aftertaste_sd, summary_table$Acidity_sd)
+)
+
+kable(summary_frame, format = "markdown", caption = "Coffee Ratings Dataset Numerical Summary", 
+      col.names = c("Variable Name", "Minimum", "Maximum", "Mean", "Standard Deviation"), 
+      align = "c", longtable = TRUE, digits = 3)
+
+coffee_df %>% group_by(Species) %>% 
+  summarise(num_species = n(), Proportion = round(num_species/nrow(coffee_df), 3), mean_rating= round(mean(Ratings), 3)) %>% 
+  rename(`Number of Observations` = num_species, 'Mean Rating' = mean_rating) %>% 
+  kable(caption = "Coffee Ratings Dataset Categorical Variable Summary", align = "c", longtable = TRUE)
+```
+
+The coffee ratings dataset contains 1339 observations, with 1311 of these being of the "Arabica" species, while the other 28 are of the "Robusta" species. The minimum for all variables is 0, while the maximum rating is given in the Sweetness category. Sweetness also has the highest mean and standard deviation.
+
+# Fit the model
+
+```{r}
+model <- lm(Ratings ~ ISpecies + Aroma + Flavor + Aftertaste + Acidity + Sweetness, data = coffee_df)
+
+```
+
+# assumption checking
+
+```{r}
+# fitted values
+y_hat <- fitted(model)
+# residual
+e_hat <- resid(model)
+
+# attached these columns to coffee_df
+coffee_df <- coffee_df %>% 
+  mutate("y_hat" = fitted(model)) %>% 
+  mutate("e_hat" = resid(model))
+
+# test coffee df: drop an "outliner" row
+test_coffee_df <- coffee_df %>% 
+  filter(!row_number() %in% c(1311))
+  
+
+# write.csv(coffee_df, "CoffeeRatings.csv", row.names = FALSE)
+```
+
+# residual vs. Species
+```{r}
+ggplot(data = coffee_df, mapping = aes(x = Species, y = e_hat)) + 
+  geom_boxplot() +
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5), 
+        plot.caption = element_text(hjust = 0.5, face = "italic"))+
+  labs(y = "Residuals", title = "Residual by Coffee Species", 
+       caption = "Fig.2b: Distribution of Residual vs. Coffee Species")
+  
+  
+```
+
+
+
+# residual-fitted value plot
+
+```{r}
+plot(x = y_hat, y = e_hat, main = "Residual vs Fitted", xlab = "Fitted", 
+     ylab = "Residuals")
+title(sub = ~italic("Fig.1: The residuals versus fitted values plot from the model."))
+
+
+# test coffee df
+# plot(x = test_coffee_df$y_hat, y = test_coffee_df$e_hat, main = "Residual vs Fitted", xlab = "Fitted", 
+#      ylab = "Residuals")
+# title(sub = ~italic("Fig.1: The residuals versus fitted values plot from the model."))
+```
+
+# all residual vs. predictors
+
+```{r}
+
+par(mfrow = c(2, 3),oma=c(4, 2, 0, 0)+0.1)
+
+plot(x = coffee_df$ISpecies, y = e_hat,
+                      main = "Residual vs. Species", xlab = "Species",
+                      ylab = "Residual")
+plot(x = coffee_df$Aroma, y = e_hat,
+                    main = "Residual vs. Aroma", xlab = "Aroma",
+                    ylab = "Residual")
+plot(x = coffee_df$Flavor, y = e_hat,
+                     main = "Residual vs. Flavor", xlab = "Flavor",
+                     ylab = "Residual")
+plot(x = coffee_df$Aftertaste, y = e_hat,
+                    main = "Residual vs. Aftertaste", xlab = "Aftertaste",
+                    ylab = "Residual")
+plot(x = coffee_df$Acidity, y = e_hat,
+                      main = "Residual vs. Acidity", xlab = "Acidity",
+                      ylab = "Residual")
+
+plot(x = coffee_df$Sweetness, y = e_hat,
+                    main = "Residual vs. Sweetness", xlab = "Sweetness",
+                    ylab = "Residual")
+mtext(~italic("Fig.2a: All residuals versus predictors plots from the model."), side = 1, line = 3, outer = TRUE, adj = 0.5)
+
+
+
+
+
+```
+
+# checking normality of errors
+
+```{r}
+
+qqnorm(e_hat)
+qqline(e_hat)
+title(sub = ~italic("Fig.3: The normal Q-Q plot of residuals from the model."))
+
+
+```
+
+# Response vs. Fitted
+
+```{r}
+
+plot(x = y_hat, y = coffee_df$Ratings, main = "Response vs. Fitted", xlab = "Fitted", 
+     ylab = "Response")
+abline(coef = c(0,1), lty = 2)
+title(sub = ~italic("Fig.4: The response (coffee ratings) versus fitted values plot from the model."))
+
+
+```
+
+# pair plots of every predictors
+
+```{r}
+pairs(coffee_df[, c(2:7)], main="Pairwise Scatterplots of Predictors")
+title(sub = ~italic("Fig.5: The pairwise scatter plots of all predictors."))
+
+```
+
+
+
+
