@@ -11,8 +11,6 @@ output: pdf_document
 library(tidyverse)
 library(knitr)
 library(dplyr)
-# set wd
-# setwd("~/Desktop/Github Projects/STA302")
 ```
 
 # extract the subset of data we need
