@@ -200,5 +200,74 @@ coffee_df2 = coffee_df %>% filter(Ratings != 0)
 
 ```
 
-# Re-check residual plots above with coffee_df2
+# Refit model with new data
+```{r}
+model2 <- lm(Ratings ~ ISpecies + Aroma + Flavor + Aftertaste + Acidity + Sweetness, data = coffee_df2)
+```
 
+# Re-check residual plots above with coffee_df2
+```{r}
+y_hat <- fitted(model2)
+# residual
+e_hat <- resid(model2)
+```
+
+# Normality 
+```{r}
+qqnorm(e_hat)
+qqline(e_hat)
+title(sub = ~italic("Fig.3: The normal Q-Q plot of residuals from the model."))
+```
+
+# Residual vs fitted plot
+```{r}
+plot(x = y_hat, y = e_hat, main = "Residual vs Fitted", xlab = "Fitted", 
+     ylab = "Residuals")
+title(sub = ~italic("Fig.1: The residuals versus fitted values plot from the model."))
+```
+
+# Boxplot for species
+```{r}
+ggplot(data = coffee_df2, mapping = aes(x = Species, y = e_hat)) + 
+  geom_boxplot() +
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5), 
+        plot.caption = element_text(hjust = 0.5, face = "italic"))+
+  labs(y = "Residuals", title = "Residual by Coffee Species", 
+       caption = "Fig.2b: Distribution of Residual vs. Coffee Species")
+```
+
+# Predictor vs residual
+```{r}
+par(mfrow = c(2, 3),oma=c(4, 2, 0, 0)+0.1)
+
+plot(x = coffee_df2$ISpecies, y = e_hat,
+                      main = "Residual vs. Species", xlab = "Species",
+                      ylab = "Residual")
+plot(x = coffee_df2$Aroma, y = e_hat,
+                    main = "Residual vs. Aroma", xlab = "Aroma",
+                    ylab = "Residual")
+plot(x = coffee_df2$Flavor, y = e_hat,
+                     main = "Residual vs. Flavor", xlab = "Flavor",
+                     ylab = "Residual")
+plot(x = coffee_df2$Aftertaste, y = e_hat,
+                    main = "Residual vs. Aftertaste", xlab = "Aftertaste",
+                    ylab = "Residual")
+plot(x = coffee_df2$Acidity, y = e_hat,
+                      main = "Residual vs. Acidity", xlab = "Acidity",
+                      ylab = "Residual")
+
+plot(x = coffee_df2$Sweetness, y = e_hat,
+                    main = "Residual vs. Sweetness", xlab = "Sweetness",
+                    ylab = "Residual")
+mtext(~italic("Fig.2a: All residuals versus predictors plots from the model."), side = 1, line = 3, outer = TRUE, adj = 0.5)
+
+```
+
+# Pairwise plots of all predictors
+
+```{r}
+pairs(coffee_df2[, c(2:7)], main="Pairwise Scatterplots of Predictors")
+title(sub = ~italic("Fig.5: The pairwise scatter plots of all predictors."))
+
+```
