@@ -194,6 +194,11 @@ title(sub = ~italic("Fig.5: The pairwise scatter plots of all predictors."))
 
 ```
 
+# Remove observation with rating of 0
+```{r}
+coffee_df2 = coffee_df %>% filter(Ratings != 0)
 
+```
 
+# Re-check residual plots above with coffee_df2
 
