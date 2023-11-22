@@ -22,6 +22,7 @@ coffee_df <- read.csv(file = "merged_data_cleaned.csv") %>%
   rename("Ratings" = Total.Cup.Points) %>% 
   mutate(.before = 1, ISpecies = ifelse(Species == "Arabica", 1, 0)) %>% 
   select(Species, ISpecies, Aroma, Flavor, Aftertaste, Acidity, Sweetness, Ratings)
+# write.csv(coffee_df,file = "CoffeeRatings.csv", row.names = FALSE)
 ```
 
 
