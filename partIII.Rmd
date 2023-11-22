@@ -80,6 +80,21 @@ model <- lm(Ratings ~ ISpecies + Aroma + Flavor + Aftertaste + Acidity + Sweetne
 
 ```
 
+# exploratory data analysis
+
+skews in predictor variables, may be an issue in linearity
+there is a severe left skew presented in the response (rating), indicating 
+possible issues with linearity/ normality
+```{r}
+par(mfrow = c(3, 3))
+for (i in c(2:8)) {
+  hist(coffee_df[,i], main = "", xlab = names(coffee_df)[i])
+}
+```
+
+
+
+
 # assumption checking
 
 ```{r}
@@ -92,11 +107,6 @@ e_hat <- resid(model)
 coffee_df <- coffee_df %>% 
   mutate("y_hat" = fitted(model)) %>% 
   mutate("e_hat" = resid(model))
-
-# test coffee df: drop an "outliner" row
-test_coffee_df <- coffee_df %>% 
-  filter(!row_number() %in% c(1311))
-  
 
 # write.csv(coffee_df, "CoffeeRatings.csv", row.names = FALSE)
 ```
@@ -195,10 +205,22 @@ title(sub = ~italic("Fig.5: The pairwise scatter plots of all predictors."))
 ```
 
 # Remove observation with rating of 0
+
 ```{r}
-coffee_df2 = coffee_df %>% filter(Ratings != 0)
+coffee_df2 <- coffee_df %>% filter(Ratings != 0)
 
 ```
+
+# exploratoty data analysis
+```{r}
+par(mfrow = c(3, 3))
+for (i in c(2:8)){
+  hist(coffee_df2[,i], main = "", xlab = names(coffee_df2)[i])
+}
+```
+
+
+
 
 # Refit model with new data
 ```{r}
@@ -211,6 +233,18 @@ y_hat <- fitted(model2)
 # residual
 e_hat <- resid(model2)
 ```
+
+# re-check condition
+# condition 1
+```{r}
+plot(x = y_hat, y = coffee_df2$Ratings, main = "Response vs. Fitted", xlab = "Fitted", 
+     ylab = "Response")
+abline(coef = c(0,1), lty = 2)
+title(sub = ~italic("Fig.4: The response (coffee ratings) versus fitted values plot from the model."))
+```
+
+
+
 
 # Normality 
 ```{r}
