@@ -147,10 +147,6 @@ for (i in c(2:7)){
 mtext(~italic("Fig.2a: All residuals versus predictors plots from the model."), 
       side = 1, line = 3, outer = TRUE, adj = 0.5)
 
-
-
-
-
 ```
 
 # checking normality of errors
