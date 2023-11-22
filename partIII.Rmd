@@ -24,6 +24,8 @@ coffee_df <- read.csv(file = "merged_data_cleaned.csv") %>%
   select(Species, ISpecies, Aroma, Flavor, Aftertaste, Acidity, Sweetness, Ratings)
 ```
 
+
+
 # numerical summary
 
 ```{r}
@@ -80,10 +82,45 @@ The coffee ratings dataset contains 1339 observations, with 1311 of these being 
 
 # Fit the model
 
-```{r}
+```{r, eval=FALSE}
 model <- lm(Ratings ~ ISpecies + Aroma + Flavor + Aftertaste + Acidity + Sweetness, data = coffee_df)
+summary(model)
+```
+
+
+# identification of the problematic observations
+do not remove any problematic oberservations expect the "0" row we observed in the 
+dataset, others are served as limitations of our model.
+```{r}
+n <- nrow(coffee_df)
+p <- length(coef(model)) - 1 # minus intercept
+# leverage point
+hii <- hatvalues(model)
+hii_cutoff <- 2 * (p + 1)/n
+leverage <- as.vector(which(hii > hii_cutoff))
+
+# outliner points
+ri <- rstandard(model)
+outliner <- as.vector(which(ri > 4 | ri < -4))
+
+# influential on all fitted values
+di <- cooks.distance(model)
+di_cutoff <- qf(0.5, p + 1, n - p - 1)
+infl_fitted <- as.vector(which(di > di_cutoff))
+
+# influential on own fitted values
+dffits <- dffits(model)
+dffits_cutoff <- 2 * sqrt((p + 1)/n)
+infl_ofitted <- as.vector(which(abs(dffits)>dffits_cutoff))
+
+# influential on coefficients
+
 
 ```
+
+
+
+
 
 # exploratory data analysis
 
@@ -209,7 +246,11 @@ normality.
 # Refit model with new data
 ```{r}
 model2 <- lm(Ratings ~ ISpecies + Aroma + Flavor + Aftertaste + Acidity + Sweetness, data = coffee_df2)
+summary(model2)
 ```
+
+
+
 
 # Re-check residual plots above with coffee_df2
 ```{r}
