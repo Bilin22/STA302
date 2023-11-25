@@ -21,7 +21,7 @@ library(car)
 coffee_df <- read.csv(file = "merged_data_cleaned.csv") %>% 
   rename("Ratings" = Total.Cup.Points) %>% 
   mutate(.before = 1, ISpecies = ifelse(Species == "Arabica", 1, 0)) %>% 
-  select(Species, ISpecies, Aroma, Flavor, Aftertaste, Acidity, Sweetness, Ratings)
+  select(Species, ISpecies, Aroma, Flavor, Aftertaste, Acidity, Ratings)
 # write.csv(coffee_df,file = "CoffeeRatings.csv", row.names = FALSE)
 ```
 
@@ -84,7 +84,7 @@ The coffee ratings dataset contains 1339 observations, with 1311 of these being 
 # Fit the model
 
 ```{r, eval=FALSE}
-model <- lm(Ratings ~ ISpecies + Aroma + Flavor + Aftertaste + Acidity + Sweetness, data = coffee_df)
+model <- lm(Ratings ~ ISpecies + Aroma + Flavor + Aftertaste + Acidity, data = coffee_df)
 summary(model)
 ```
 
@@ -145,8 +145,8 @@ coffee_df2 <- coffee_df[-c(1311),]
 
 # exploratoty data analysis
 ```{r}
-par(mfrow = c(3, 3))
-for (i in c(2:8)){
+par(mfrow = c(2, 3))
+for (i in c(2:7)){
   hist(coffee_df2[,i], main = "", xlab = names(coffee_df2)[i])
 }
 ```
@@ -163,7 +163,7 @@ normality.
 
 # Refit model with new data
 ```{r}
-model2 <- lm(Ratings ~ ISpecies + Aroma + Flavor + Aftertaste + Acidity + Sweetness, data = coffee_df2)
+model2 <- lm(Ratings ~ ISpecies + Aroma + Flavor + Aftertaste + Acidity, data = coffee_df2)
 summary(model2)
 ```
 
@@ -224,7 +224,7 @@ title(sub = ~italic("Fig.2b: Distribution of Residual vs. Coffee Species"))
 ```{r}
 par(mfrow = c(2, 3),oma=c(4, 2, 0, 0)+0.1)
 
-for (i in c(2:7)){
+for (i in c(2:6)){
   plot(x = coffee_df2[, i], y = e_hat_2, xlab = names(coffee_df2)[i],
        ylab = "Residual", main = paste("Residual vs. ", names(coffee_df2)[i]))
 }
@@ -252,6 +252,10 @@ plots.
 4. the linearity assumption is satisfied since no non-linear patterns appeared in 
 residual plots.
 
-Based on these evidence, 
+Based on these evidence, to mitigate the violation
+we decided to apply a squares transformation to the response variable 
+
+
+
 
 
