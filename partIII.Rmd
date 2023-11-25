@@ -37,31 +37,27 @@ summary_table <- coffee_df %>%
     Aroma_mean = mean(Aroma),
     Flavor_mean = mean(Flavor),
     Aftertaste_mean = mean(Aftertaste),
-    Sweetness_mean = mean(Sweetness),
     Acidity_mean = mean(Acidity),
     Aroma_sd = sd(Aroma),
     Flavor_sd = sd(Flavor),
     Aftertaste_sd = sd(Aftertaste),
-    Sweetness_sd = sd(Sweetness),
     Acidity_sd = sd(Acidity),
     Aroma_max = max(Aroma),
     Flavor_max = max(Flavor),
     Aftertaste_max = max(Aftertaste),
-    Sweetness_max = max(Sweetness),
     Acidity_max = max(Acidity),
     Aroma_min = min(Aroma),
     Flavor_min = min(Flavor),
     Aftertaste_min = min(Aftertaste),
-    Sweetness_min = min(Sweetness),
     Acidity_min = min(Acidity), 
 )
 
 summary_frame = data.frame(
-  Variables = c("Flavor", "Aroma", "Sweetness", "Aftertaste", "Acidity"),
-  Min = c(summary_table$Flavor_min, summary_table$Aroma_min, summary_table$Sweetness_min, summary_table$Aftertaste_min, summary_table$Acidity_min),
-  Max = c(summary_table$Flavor_max, summary_table$Aroma_max, summary_table$Sweetness_max, summary_table$Aftertaste_max, summary_table$Acidity_max),
-  Mean = c(summary_table$Flavor_mean, summary_table$Aroma_mean, summary_table$Sweetness_mean, summary_table$Aftertaste_mean, summary_table$Acidity_mean),
-  SD = c(summary_table$Flavor_sd, summary_table$Aroma_sd, summary_table$Sweetness_sd, summary_table$Aftertaste_sd, summary_table$Acidity_sd)
+  Variables = c("Flavor", "Aroma", "Aftertaste", "Acidity"),
+  Min = c(summary_table$Flavor_min, summary_table$Aroma_min, summary_table$Aftertaste_min, summary_table$Acidity_min),
+  Max = c(summary_table$Flavor_max, summary_table$Aroma_max, summary_table$Aftertaste_max, summary_table$Acidity_max),
+  Mean = c(summary_table$Flavor_mean, summary_table$Aroma_mean, summary_table$Aftertaste_mean, summary_table$Acidity_mean),
+  SD = c(summary_table$Flavor_sd, summary_table$Aroma_sd, summary_table$Aftertaste_sd, summary_table$Acidity_sd)
 )
 
 kable(summary_frame, format = "markdown", caption = "Coffee Ratings Dataset Numerical Summary", 
