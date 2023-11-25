@@ -214,13 +214,10 @@ title(sub = ~italic("Fig.1: The residuals versus fitted values plot from the mod
 
 # Boxplot for species
 ```{r}
-ggplot(data = coffee_df2, mapping = aes(x = Species, y = e_hat_2)) + 
-  geom_boxplot() +
-  theme_bw()+
-  theme(plot.title = element_text(hjust = 0.5), 
-        plot.caption = element_text(hjust = 0.5, face = "italic"))+
-  labs(y = "Residuals", title = "Residual by Coffee Species", 
-       caption = "Fig.2b: Distribution of Residual vs. Coffee Species")
+
+boxplot(e_hat_2 ~ Species, data = coffee_df2, ylab = "Residual", main = "Residual by Coffee Species")
+title(sub = ~italic("Fig.2b: Distribution of Residual vs. Coffee Species"))
+
 ```
 
 # Predictor vs residual
