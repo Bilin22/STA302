@@ -233,5 +233,25 @@ mtext(~italic("Fig.2a: All residuals versus predictors plots from the model."), 
 
 ```
 
+* from the exploratory data analysis, we discovered that left-skewness presented
+in the response variable (coffee ratings), also presented in the predictors (sweetness)
+. Additionally, the majority of data are collected from species "Arabica", indicated
+a potential violation in the uncorrelated error assumption.
+
+* Both the conditional mean response and conditional mean predictors conditions are
+satisfied, so we can trust the interpretation of the residual plots when checking 
+assumptions.
+
+* assumptions:
+1. the normality assumption is violated: significant off-diagonal trend presented 
+in the normal qq plot.
+2. the constant variance assumption is violated: since there is a decreasing fanning 
+pattern in the residual vs. fitted as well the residual vs. predictors plot.
+3. the uncorrelated error assumption is violated: since clusters appears in the residual
+plots.
+4. the linearity assumption is satisfied since no non-linear patterns appeared in 
+residual plots.
+
+Based on these evidence, 
 
 
