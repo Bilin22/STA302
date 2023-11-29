@@ -303,30 +303,43 @@ e_hat_5 <- resid(model5)
 # hist(coffee_df2[,"Ratings"], main = "Distribution of Ratings", xlab = "Ratings")
 # plot(y = e_hat_2, x = y_hat_2, main = "Residual vs Fitted", xlab = "Fitted", 
 #      ylab = "Residuals")
-par(mfrow = c(3, 2))
+par(mfrow = c(2, 4))
 
-hist(coffee_df2[, "lgRatings"], main = "Distribution of lgRatings", xlab = "lgRatings")
-plot(x = y_hat_3, y = e_hat_3, main = "Residual vs Fitted (log)", xlab = "Fitted", 
+hist(coffee_df2[, "Ratings"], xlab = "Ratings", main = "")
+plot(x = y_hat_2, y = e_hat_2, xlab = "Fitted", 
      ylab = "Residuals")
 
-hist(coffee_df2[, "sqRatings"], main = "Distribution of sqRatings", xlab = "sqRatings")
-plot(x = y_hat_4, y = e_hat_4, main = "Residual vs Fitted (Squares)", xlab = "Fitted", 
+hist(coffee_df2[, "lgRatings"], xlab = "lgRatings", main = "")
+plot(x = y_hat_3, y = e_hat_3, xlab = "Fitted", 
      ylab = "Residuals")
 
-hist(coffee_df2[, "cuberootRatings"], main = "Distribution of cuberootRatings", xlab = "cuberootRatings")
-plot(x = y_hat_5, y = e_hat_5, main = "Residual vs Fitted (Cuberoot)", xlab = "Fitted", 
+hist(coffee_df2[, "sqRatings"], xlab = "sqRatings", main = "")
+plot(x = y_hat_4, y = e_hat_4, xlab = "Fitted", 
+     ylab = "Residuals")
+
+hist(coffee_df2[, "cuberootRatings"], xlab = "cuberootRatings", main = "")
+plot(x = y_hat_5, y = e_hat_5, xlab = "Fitted", 
      ylab = "Residuals")
 
 # none of these transformation improved either the skewness in the repsonse
 # or the violation in constant variance assumption
-# not to transform
+
 
 
 
 ```
 ```{r}
 # qq plot after potential transformation
-
+# does not have any improvement
+par(mfrow = c(2, 2))
+qqnorm(e_hat_2)
+qqline(e_hat_2)
+qqnorm(e_hat_3,main = "Normal Q-Q Plot (log)")
+qqline(e_hat_3)
+qqnorm(e_hat_4,main = "Normal Q-Q Plot (Squares)")
+qqline(e_hat_4)
+qqnorm(e_hat_5,main = "Normal Q-Q Plot (CubeRoot)")
+qqline(e_hat_5)
 ```
 
 
