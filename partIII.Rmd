@@ -6,16 +6,15 @@ output: pdf_document
 ---
 
 
-# load the library
 
-```{r}
+```{r, echo = TRUE, include=FALSE}
 library(tidyverse)
 library(knitr)
 library(dplyr)
 library(car)
 ```
 
-# extract the subset of data we need
+## extract the subset of data we need
 
 ```{r}
 coffee_df <- read.csv(file = "merged_data_cleaned.csv") %>% 
@@ -27,7 +26,7 @@ coffee_df <- read.csv(file = "merged_data_cleaned.csv") %>%
 
 
 
-# numerical summary
+## numerical summary
 
 ```{r}
 summary(coffee_df)
@@ -54,41 +53,42 @@ summary_table <- coffee_df %>%
 
 summary_frame = data.frame(
   Variables = c("Flavor", "Aroma", "Aftertaste", "Acidity"),
-  Min = c(summary_table$Flavor_min, summary_table$Aroma_min, summary_table$Aftertaste_min, summary_table$Acidity_min),
-  Max = c(summary_table$Flavor_max, summary_table$Aroma_max, summary_table$Aftertaste_max, summary_table$Acidity_max),
-  Mean = c(summary_table$Flavor_mean, summary_table$Aroma_mean, summary_table$Aftertaste_mean, summary_table$Acidity_mean),
-  SD = c(summary_table$Flavor_sd, summary_table$Aroma_sd, summary_table$Aftertaste_sd, summary_table$Acidity_sd)
+  Min = c(summary_table$Flavor_min, 
+          summary_table$Aroma_min, summary_table$Aftertaste_min, 
+          summary_table$Acidity_min),
+  Max = c(summary_table$Flavor_max, summary_table$Aroma_max, 
+          summary_table$Aftertaste_max, summary_table$Acidity_max),
+  Mean = c(summary_table$Flavor_mean, summary_table$Aroma_mean, 
+           summary_table$Aftertaste_mean, summary_table$Acidity_mean),
+  SD = c(summary_table$Flavor_sd, summary_table$Aroma_sd, 
+         summary_table$Aftertaste_sd, summary_table$Acidity_sd)
 )
 
 kable(summary_frame, format = "markdown", caption = "Coffee Ratings Dataset Numerical Summary", 
-      col.names = c("Variable Name", "Minimum", "Maximum", "Mean", "Standard Deviation"), 
+      col.names = c("Variable Name", "Minimum", 
+                    "Maximum", "Mean", "Standard Deviation"), 
       align = "c", longtable = TRUE, digits = 3)
 
 coffee_df %>% group_by(Species) %>% 
   summarise(num_species = n(), Proportion = round(num_species/nrow(coffee_df), 3), mean_rating= round(mean(Ratings), 3)) %>% 
   rename(`Number of Observations` = num_species, 'Mean Rating' = mean_rating) %>% 
-  kable(caption = "Coffee Ratings Dataset Categorical Variable Summary", align = "c", longtable = TRUE)
+  kable(caption = "Coffee Ratings Dataset Categorical Variable Summary", 
+        align = "c", longtable = TRUE)
 ```
-
-
-
 
 
 
 The coffee ratings dataset contains 1339 observations, with 1311 of these being of the "Arabica" species, while the other 28 are of the "Robusta" species. The minimum for all variables is 0, while the maximum rating is given in the Sweetness category. Sweetness also has the highest mean and standard deviation.
 
-# Fit the model
-
-```{r, eval=FALSE}
-model <- lm(Ratings ~ ISpecies + Aroma + Flavor + Aftertaste + Acidity, data = coffee_df)
-summary(model)
-```
-
-
-# identification of problematic observations
+## Fit the model
+## identification of problematic observations
 do not remove any problematic oberservations expect the "0" row we observed in the 
 dataset, others are served as limitations of our model.
 ```{r}
+model <- lm(Ratings ~ ISpecies + Aroma + Flavor + Aftertaste + Acidity, 
+            data = coffee_df)
+summary(model)
+
 n <- nrow(coffee_df)
 p <- length(coef(model)) - 1 # minus intercept
 # leverage point
@@ -116,7 +116,8 @@ dfbetas_cutoff <- 2/ sqrt(dim(dfbetas)[1])
 # dim(dfbetas)
 infl_coef <- c()
 for (i in c(1:dim(dfbetas)[2])) {
-  infl_coef <- append(infl_coef, as.vector(which(abs(dfbetas) > dfbetas_cutoff)))
+  infl_coef <- append(infl_coef, 
+                      as.vector(which(abs(dfbetas) > dfbetas_cutoff)))
   # print(as.vector(which(abs(dfbetas) > dfbetas_cutoff)))
   
 }
@@ -129,17 +130,14 @@ i
 observation # 1311 is problematic, and it has 0 in the rating, so we decide to 
 remove this observation.
 
-
-
-
-# Remove observation with rating of 0
+Remove observation with rating of 0
 
 ```{r}
 
 coffee_df2 <- coffee_df[-c(1311),]
 ```
 
-# exploratoty data analysis
+## exploratoty data analysis
 ```{r}
 par(mfrow = c(2, 3))
 for (i in c(2:7)){
@@ -157,23 +155,23 @@ normality.
 
 
 
-# Refit model with new data
+## Refit model with new data
 ```{r}
 model2 <- lm(Ratings ~ ISpecies + Aroma + Flavor + Aftertaste + Acidity, data = coffee_df2)
 summary(model2)
 ```
 
 
-# check residual plots above with coffee_df2
+## check residual plots above with coffee_df2
 ```{r}
 y_hat_2 <- fitted(model2)
 # residual
 e_hat_2 <- resid(model2)
 ```
 
-# check condition
-# condition 1: response vs. fitted -- conditional mean response
-# condition 2: pairwise scatter plot of all predictors -- conditional mean predictors
+## check condition
+## condition 1: response vs. fitted -- conditional mean response
+## condition 2: pairwise scatter plot of all predictors -- conditional mean predictors
 ```{r}
 
 plot(x = y_hat_2, y = coffee_df2$Ratings, main = "Response vs. Fitted", xlab = "Fitted", 
@@ -192,7 +190,7 @@ title(sub = ~italic("Fig.5: The pairwise scatter plots of all predictors."))
 
 
 
-# Normality 
+## Normality 
 ```{r}
 
 qqnorm(e_hat_2)
@@ -201,14 +199,14 @@ title(sub = ~italic("Fig.3: The normal Q-Q plot of residuals from the model."))
 
 ```
 
-# Residual vs fitted plot
+## Residual vs fitted plot
 ```{r}
 plot(x = y_hat_2, y = e_hat_2, main = "Residual vs Fitted", xlab = "Fitted", 
      ylab = "Residuals")
 title(sub = ~italic("Fig.1: The residuals versus fitted values plot from the model."))
 ```
 
-# Boxplot for species
+## Boxplot for species
 ```{r}
 
 boxplot(e_hat_2 ~ Species, data = coffee_df2, ylab = "Residual", main = "Residual by Coffee Species")
@@ -216,7 +214,7 @@ title(sub = ~italic("Fig.2b: Distribution of Residual vs. Coffee Species"))
 
 ```
 
-# Predictor vs residual
+## Predictor vs residual
 ```{r}
 par(mfrow = c(2, 3),oma=c(4, 2, 0, 0)+0.1)
 
@@ -341,5 +339,21 @@ qqline(e_hat_4)
 qqnorm(e_hat_5,main = "Normal Q-Q Plot (CubeRoot)")
 qqline(e_hat_5)
 ```
+After trying the possible variance-stabilizing transformation and Box-Cox
+transformation, we keep the same model (model2) as it is before the transformation, 
+since the transformation did not mitigate the violation and skewness in the response variable.
+We accepted the violations in our model as a caveat.
+
+## ANOVA test for overall significance
+* $H_0: \beta_1 = \beta_2 = \beta_3 = \beta_4 = \beta_5 = 0$
+* $H_1:$ at least one $\beta_j$ != $0$
+
+notice that the p-value of model2 less than $2.2 \times 10^{-16}$
+therefore, we reject null and conclude significant linear relationship
+exists for at least one predictor.
+```{r}
+summary(model2)
+```
+
 
 
