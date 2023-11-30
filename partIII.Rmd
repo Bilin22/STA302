@@ -341,8 +341,9 @@ qqline(e_hat_5)
 ```
 After trying the possible variance-stabilizing transformation and Box-Cox
 transformation, we keep the same model (model2) as it is before the transformation, 
-since the transformation did not mitigate the violation and skewness in the response variable.
-We accepted the violations in our model as a caveat.
+since the transformation did not mitigate the violation and skewness in the 
+response variable.
+We accepted the violations in our model as a caveat of the natural of data.
 
 ## ANOVA test for overall significance
 * $H_0: \beta_1 = \beta_2 = \beta_3 = \beta_4 = \beta_5 = 0$
@@ -354,6 +355,43 @@ exists for at least one predictor.
 ```{r}
 summary(model2)
 ```
+From the summary table, notice that there is a significant linear relationship 
+between every predictor and coffee ratings in the presence of other predictors,
+we conclude that every predictor is linearly related to the coffee rating.
+We want to see whether the reduced model may better than the full model.
 
+## Partial F Test
+```{r}
+# full model contains ISpecies, Aroma, Flavor, Aftertaste, Acidity
+
+# refit a model not using acidity
+model6 <- lm(Ratings ~ ISpecies + Aroma + Flavor + Aftertaste, data = coffee_df2)
+summary(model6)
+
+anova(model6, model2)
+# since p-value = 9.022e-08 ***, we reject the null
+# do not discard
+
+# not using Aftertaste
+model7 <- lm(Ratings ~ ISpecies + Aroma + Flavor + Acidity, data = coffee_df2)
+summary(model7)
+
+anova(model7, model2)
+
+# not using Flavor
+model8 <- lm(Ratings ~ ISpecies + Aroma + Aftertaste + Acidity, data = coffee_df2)
+anova(model8, model2)
+
+# not using Aroma
+model9 <- lm(Ratings ~ ISpecies + Flavor + Aftertaste + Acidity, 
+             data = coffee_df2)
+anova(model9, model2)
+
+# not using ISpecies
+model10 <- lm(Ratings ~ Aroma + Flavor + Aftertaste + Acidity, data = coffee_df2)
+anova(model10, model2)
+
+
+```
 
 
