@@ -463,3 +463,15 @@ cbind(summary(model2)$adj.r.squared, extractAIC(model2, k=2)[2], extractAIC(mode
       extractAIC(model2, k=2)[2]+(2*(p+2)*(p+3)/(n-p-1)))
 
 ```
+
+# All possible subsets check
+```{r}
+install.packages("leaps")
+library(leaps)
+
+best <- regsubsets(Ratings ~ ISpecies + Aroma + Flavor + Aftertaste + Acidity, data=coffee_df2, nbest=1, nvmax=5)
+summary(best)
+
+subsets(best, statistic="adjr2", legend=FALSE)
+# Model with all five predictors has highest adjusted R squared
+```
