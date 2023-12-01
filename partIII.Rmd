@@ -267,6 +267,18 @@ summary(p)
 ```
 
 ```{r}
+# Attempt simultaneous BoxCox transformation on response and predictors
+coffee_df2$BoxCoxRatings <- (coffee_df2$Ratings)^11
+model6 = lm(BoxCoxRatings ~ ISpecies + Aroma^4 + Flavor^4 + Aftertaste^4 + Acidity^4, data = coffee_df2)
+y_hat_6 <- fitted(model6)
+e_hat_6 <- resid(model6)
+qqnorm(e_hat_6)
+qqline(e_hat_6)
+# Transformations do not improve normality violation
+```
+
+
+```{r}
 # variance stabilizing transformation
 # we spotted the left-skew in response distribution 
 # and a fanning pattern with decreasing spread in the residual plot
@@ -394,4 +406,60 @@ anova(model10, model2)
 
 ```
 
+```{r}
+# Recheck problematic observations, VIF, and model goodness
 
+n <- nrow(coffee_df2)
+p <- length(coef(model2)) - 1 # minus intercept
+
+# leverage point
+hii <- hatvalues(model2)
+hii_cutoff <- 2 * (p + 1)/n
+leverage <- as.vector(which(hii > hii_cutoff))
+
+
+# outlier points
+ri <- rstandard(model2)
+outlier <- as.vector(which(ri > 4 | ri < -4))
+
+
+# influential on all fitted values
+di <- cooks.distance(model2)
+di_cutoff <- qf(0.5, p + 1, n - p - 1)
+infl_fitted <- as.vector(which(di > di_cutoff))
+
+
+# influential on own fitted values
+dffits <- dffits(model2)
+dffits_cutoff <- 2 * sqrt((p + 1)/n)
+infl_ofitted <- as.vector(which(abs(dffits)>dffits_cutoff))
+
+
+# influential on coefficients
+dfbetas <- dfbetas(model2)
+dfbetas_cutoff <- 2/ sqrt(dim(dfbetas)[1])
+# dim(dfbetas)
+infl_coef <- c()
+for (i in c(1:dim(dfbetas)[2])) {
+  infl_coef <- append(infl_coef, 
+                      as.vector(which(abs(dfbetas) > dfbetas_cutoff)))
+  #print(as.vector(which(abs(dfbetas) > dfbetas_cutoff)))
+  print(length(which(abs(dfbetas[,i]) > dfbetas_cutoff)))
+}
+
+# problematic observations that appear in both criteria
+i <- Reduce(intersect, list(leverage, outlier, infl_fitted, infl_ofitted, 
+                            infl_coef))
+i
+
+# Check for multicollinearity
+vif(model2)
+
+p =length(coef(model2)) - 1
+n=nrow(coffee_df2)
+
+# Calculate adjusted R^2, AIC, BIC, and AICc
+cbind(summary(model2)$adj.r.squared, extractAIC(model2, k=2)[2], extractAIC(model2, k=log(n))[2],
+      extractAIC(model2, k=2)[2]+(2*(p+2)*(p+3)/(n-p-1)))
+
+```
