@@ -1,5 +1,5 @@
 ---
-title: "Part III"
+title: "STA302 Project Part III"
 author: "Group 25"
 date: "`r Sys.Date()`"
 output: pdf_document
@@ -466,7 +466,7 @@ cbind(summary(model2)$adj.r.squared, extractAIC(model2, k=2)[2], extractAIC(mode
 
 # All possible subsets check
 ```{r}
-install.packages("leaps")
+# install.packages("leaps")
 library(leaps)
 
 best <- regsubsets(Ratings ~ ISpecies + Aroma + Flavor + Aftertaste + Acidity, data=coffee_df2, nbest=1, nvmax=5)
